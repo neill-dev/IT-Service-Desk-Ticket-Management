@@ -22,8 +22,12 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Initialize database
-database.init_database()
+# Initialize database with error handling
+try:
+    database.init_database()
+except Exception as e:
+    st.error(f"Database initialization error: {e}")
+    st.stop()
 
 # Custom CSS for professional styling
 st.markdown("""

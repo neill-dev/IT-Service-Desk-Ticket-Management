@@ -3,13 +3,21 @@ import os
 from datetime import datetime
 import uuid
 
-DB_FILE = "service_desk.db"
+# Handle database file path for both local and cloud environments
+if os.path.exists("/tmp"):
+    DB_FILE = "/tmp/service_desk.db"  # Streamlit Cloud uses /tmp
+else:
+    DB_FILE = "service_desk.db"  # Local development
 
 def get_connection():
     """Get a database connection."""
-    conn = sqlite3.connect(DB_FILE)
-    conn.row_factory = sqlite3.Row
-    return conn
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        conn.row_factory = sqlite3.Row
+        return conn
+    except Exception as e:
+        print(f"Database connection error: {e}")
+        raise
 
 def init_database():
     """Initialize the database with the tickets table."""
