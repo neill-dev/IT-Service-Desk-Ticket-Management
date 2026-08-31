@@ -13,7 +13,6 @@ import pandas as pd
 from datetime import datetime
 import database
 import support_logic
-import sys
 
 # Page configuration
 st.set_page_config(
@@ -23,25 +22,12 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Initialize database only once using Streamlit caching
-@st.cache_resource
-def init_db():
-    """Initialize database connection (cached for app lifetime)."""
-    try:
-        database.init_database()
-        print("Database initialized successfully", file=sys.stderr)
-        return True
-    except Exception as e:
-        error_msg = f"Database initialization failed: {str(e)}"
-        print(error_msg, file=sys.stderr)
-        raise RuntimeError(error_msg)
-
-# Initialize database with error handling
+# Initialize database - called on first load
 try:
-    init_db()
+    database.init_database()
 except Exception as e:
-    st.error(f"❌ Database Error: {e}")
-    st.info("Check Streamlit Cloud logs for details.")
+    st.error(f"❌ Database Error: {str(e)}")
+    st.info("The app cannot start without a database. Please refresh the page.")
     st.stop()
 
 # Custom CSS for professional styling

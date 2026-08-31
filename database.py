@@ -2,42 +2,26 @@ import sqlite3
 import os
 from datetime import datetime
 import uuid
-import sys
 
 # Handle database file path for both local and cloud environments
-try:
-    if os.path.exists("/tmp") and os.access("/tmp", os.W_OK):
-        DB_FILE = "/tmp/service_desk.db"  # Streamlit Cloud
-        print(f"Using cloud database path: {DB_FILE}", file=sys.stderr)
-    else:
-        # Fallback to home directory or current directory
-        db_dir = os.path.expanduser("~/.streamlit")
-        os.makedirs(db_dir, exist_ok=True)
-        DB_FILE = os.path.join(db_dir, "service_desk.db")
-        print(f"Using fallback database path: {DB_FILE}", file=sys.stderr)
-except Exception as e:
-    print(f"Path resolution error: {e}", file=sys.stderr)
-    DB_FILE = "service_desk.db"  # Final fallback
+if os.path.exists("/tmp") and os.access("/tmp", os.W_OK):
+    DB_FILE = "/tmp/service_desk.db"  # Streamlit Cloud
+else:
+    # Fallback to home directory for local testing
+    db_dir = os.path.expanduser("~/.streamlit")
+    os.makedirs(db_dir, exist_ok=True)
+    DB_FILE = os.path.join(db_dir, "service_desk.db")
 
 def get_connection():
     """Get a database connection."""
-    try:
-        conn = sqlite3.connect(DB_FILE, check_same_thread=False)
-        conn.row_factory = sqlite3.Row
-        return conn
-    except Exception as e:
-        print(f"Database connection error at {DB_FILE}: {e}", file=sys.stderr)
-        raise
+    conn = sqlite3.connect(DB_FILE, check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 def init_database():
     """Initialize the database with the tickets table."""
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        print(f"Database initialized at: {DB_FILE}", file=sys.stderr)
-    except Exception as e:
-        print(f"Failed to initialize database: {e}", file=sys.stderr)
-        raise
+    conn = get_connection()
+    cursor = conn.cursor()
     
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tickets (
