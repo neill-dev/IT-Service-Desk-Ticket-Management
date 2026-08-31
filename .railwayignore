@@ -1,0 +1,22 @@
+# Database files (will be recreated)
+service_desk.db
+
+# Python cache
+__pycache__
+*.pyc
+.Python
+
+# Environment
+.env
+*.venv
+venv/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
